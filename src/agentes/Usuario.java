@@ -1,6 +1,7 @@
 package agentes;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import jade.core.*;
 import jade.domain.DFService;
@@ -13,22 +14,24 @@ import jade.domain.FIPAAgentManagement.RefuseException;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
+import jade.proto.AchieveREInitiator;
 import jade.proto.AchieveREResponder;
 import jade.proto.ContractNetResponder;
+import modelos.Producto;
 
 @SuppressWarnings({"serial"})
 public class Usuario extends Agent{
 	
 	private vistas.Principal gui;
-	public String contrasenna ="123";
-	
+	private String contrasenna ="123";
+
 	
 	protected void setup() {
 		gui = new vistas.Principal(this);
 	    gui.setVisible(true);
         gui.setVisible(false);
 
-        // Registrar agente como "persona"
+        // Registrar agente como "usuario"
         DFAgentDescription dfd = new DFAgentDescription();
         dfd.setName(this.getAID());
         ServiceDescription sd = new ServiceDescription();
@@ -41,13 +44,13 @@ public class Usuario extends Agent{
             e.printStackTrace();
         }
 
-        // Agregar comportamiento ContractNetResponder (Venta de libros)
+        // Agregar comportamiento ContractNetResponder (Gestion de usurio)
         MessageTemplate template = MessageTemplate.and(
                 MessageTemplate.MatchProtocol(FIPANames.InteractionProtocol.FIPA_CONTRACT_NET),
                 MessageTemplate.MatchPerformative(ACLMessage.CFP)
         );
 
-        // Agregar comportamiento AchieveREResponder (Para definir un papel asignado por el planificador)
+        // Agregar comportamiento AchieveREResponder (Para autenticar usuario, contraseña)
         template = MessageTemplate.and(
                 MessageTemplate.MatchProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST),
                 MessageTemplate.MatchPerformative(ACLMessage.REQUEST)
@@ -73,6 +76,8 @@ public class Usuario extends Agent{
                 }
             }
         });
+        
+        
 
         System.out.println(this.getLocalName() + " iniciado");
     }
@@ -92,5 +97,33 @@ public class Usuario extends Agent{
         }
         System.out.println(this.getLocalName() + " finalizado");
     }
+	
+	public void agregarCarrito(Producto producto){    	
+        ACLMessage msg = new ACLMessage(ACLMessage.REQUEST);
+        msg.addReceiver(new AID("carrito"+this.getLocalName(), AID.ISLOCALNAME));
+        msg.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST);
+        msg.setReplyByDate(new Date(System.currentTimeMillis() + 10000));
+        msg.setContent("agregar");
+
+        // Agregar comportamiento AchieveREInitiator (Autenticar persona)
+        addBehaviour(new AchieveREInitiator(this, msg) {
+            protected void handleInform(ACLMessage inform) {
+                System.out.println(inform.getSender().getLocalName() + " ha iniciado sesión");
+            }
+
+            protected void handleRefuse(ACLMessage refuse) {
+                System.out.println(refuse.getSender().getLocalName() + ": " + refuse.getContent());
+            }
+
+            protected void handleFailure(ACLMessage failure) {
+                if (failure.getSender().equals(myAgent.getAMS())) {
+                    // Mensaje de la plataforma JADE: El destinatario no existe
+                    System.out.println("El usuario no se encuentra registrado");
+                } else {
+                    System.out.println(failure.getSender().getLocalName() + ": " + failure.getContent());
+                }
+            }
+        });
+	}
 
 }

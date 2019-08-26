@@ -16,11 +16,15 @@ import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.JTable;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.event.ActionEvent;
 import javax.swing.JTextField;
 
-public class Cart {
-
+public class Cart extends JFrame{
+	
+	private agentes.Carrito agente;
+	
 	private JFrame Carrito;
 	private final JPanel panel = new JPanel();
 	private JTable table;
@@ -47,23 +51,30 @@ public class Cart {
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					Cart window = new Cart();
-					window.Carrito.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+//	public static void main(String[] args) {
+//		EventQueue.invokeLater(new Runnable() {
+//			public void run() {
+//				try {
+//					Cart window = new Cart();
+//					window.Carrito.setVisible(true);
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//				}
+//			}
+//		});
+//	}
 
 	/**
 	 * Create the application.
 	 */
-	public Cart() {
+	public Cart(agentes.Carrito carrito) {
+		agente = carrito;
+		addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                //agente.doDelete();
+            }
+        });
 		initialize();
 	}
 
@@ -71,16 +82,15 @@ public class Cart {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		Carrito = new JFrame();
-		Carrito.setIconImage(Toolkit.getDefaultToolkit().getImage(Cart.class.getResource("/img/logo.png")));
-		Carrito.setTitle("Mi Carrito");
-		Carrito.setResizable(false);
-		Carrito.setBounds(100, 100, 600, 450);
-		Carrito.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		Carrito.getContentPane().setLayout(null);
+		setIconImage(Toolkit.getDefaultToolkit().getImage(Cart.class.getResource("/img/logo.png")));
+		setTitle("Mi Carrito");
+		setResizable(false);
+		setBounds(100, 100, 600, 450);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		getContentPane().setLayout(null);
 		panel.setBackground(new Color(102, 205, 170));
 		panel.setBounds(0, 0, 594, 421);
-		Carrito.getContentPane().add(panel);
+		getContentPane().add(panel);
 		panel.setLayout(null);
 		
 		JLabel lblMiCarrito = new JLabel("Mi Carrito");
