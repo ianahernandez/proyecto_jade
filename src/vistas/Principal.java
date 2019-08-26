@@ -42,6 +42,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.Toolkit;
+import javax.swing.SwingConstants;
 
 @SuppressWarnings({"serial", "unused"})
 public class Principal extends JFrame{
@@ -57,6 +59,8 @@ public class Principal extends JFrame{
 	 * Create the application.
 	 */
 	public Principal(agentes.Usuario usuario) {
+		setIconImage(Toolkit.getDefaultToolkit().getImage(Principal.class.getResource("/img/logo.png")));
+		setResizable(false);
 		agente = usuario;
 		
 		addWindowListener(new WindowAdapter() {
@@ -74,35 +78,17 @@ public class Principal extends JFrame{
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private void initialize() {
 		setTitle(agente.getLocalName() );
-        setBounds(100, 100, 735, 462);
+        setBounds(100, 100, 700, 450);
         JPanel panel = new JPanel();
+        panel.setBackground(Color.WHITE);
 		panel.setBounds(0, 0, 434, 261);
         setContentPane(panel);
 		panel.setLayout(null);
 		
-		textField = new JTextField();
-		textField.setBounds(47, 67, 330, 28);
-		panel.add(textField);
-		textField.setColumns(10);
-		
-		JLabel lblBuscar = new JLabel("Buscar");
-		lblBuscar.setBounds(10, 74, 46, 14);
-		panel.add(lblBuscar);
-		
-		JComboBox comboBox = new JComboBox();
-		comboBox.setBounds(515, 67, 194, 28);
-		comboBox.setModel(new DefaultComboBoxModel(
-                new String[] {"Dulces", "Enlatados", "Salsas", "Reposteria","Telefonia"}));
-		panel.add(comboBox);
-		
-		JLabel label = new JLabel("Categorias");
-		label.setBounds(445, 74, 70, 14);
-		panel.add(label);
-		
 
         JScrollPane scrollPane = new JScrollPane();
-        scrollPane.setLocation(10, 125);
-        scrollPane.setSize(699, 190);
+        scrollPane.setLocation(10, 194);
+        scrollPane.setSize(674, 216);
         getContentPane().add(scrollPane);
 		
         //Definicion y configuraciones básicas de la tabla
@@ -113,6 +99,69 @@ public class Principal extends JFrame{
         tablaProductos.setColumnSelectionAllowed(false);
         tablaProductos.setRowSelectionAllowed(true);
         tablaProductos.setRowHeight(30);
+        
+        JLabel lblSmartstore = new JLabel("SmartStore");
+        lblSmartstore.setFont(new Font("Segoe UI", Font.BOLD | Font.ITALIC, 20));
+        ImageIcon logo = new ImageIcon(new ImageIcon(Principal.class.getResource("/img/logo.png")).getImage().getScaledInstance(45, 45, Image.SCALE_DEFAULT));
+		lblSmartstore.setIcon(logo);
+        lblSmartstore.setBounds(10, 11, 155, 45);
+        panel.add(lblSmartstore);
+        
+        JButton Usuario = new JButton("");
+        Usuario.setBackground(Color.WHITE);
+        ImageIcon imgUsuario = new ImageIcon(new ImageIcon(Principal.class.getResource("/img/user.png")).getImage().getScaledInstance(45, 45, Image.SCALE_DEFAULT));
+		Usuario.setIcon(imgUsuario);
+        Usuario.setBounds(582, 11, 46, 45);
+        Usuario.setContentAreaFilled(false);
+        Usuario.setOpaque(true);
+		panel.add(Usuario);
+		
+		JButton Carrito = new JButton("");
+		ImageIcon imgCarrito = new ImageIcon(new ImageIcon(Principal.class.getResource("/img/cart.png")).getImage().getScaledInstance(40, 40, Image.SCALE_DEFAULT));
+		Carrito.setIcon(imgCarrito);
+        Carrito.setOpaque(true);
+		Carrito.setContentAreaFilled(false);
+		Carrito.setBackground(Color.WHITE);
+		Carrito.setBounds(638, 11, 46, 45);
+		panel.add(Carrito);
+		
+		JPanel panel_1 = new JPanel();
+		panel_1.setBackground(new Color(102, 205, 170));
+		panel_1.setBounds(0, 65, 694, 91);
+		panel.add(panel_1);
+		panel_1.setLayout(null);
+		
+		JLabel lblBuscar = new JLabel("Busca un producto:");
+		lblBuscar.setFont(new Font("Segoe UI Semilight", Font.PLAIN, 14));
+		lblBuscar.setForeground(new Color(255, 255, 255));
+		lblBuscar.setBounds(160, 13, 117, 20);
+		panel_1.add(lblBuscar);
+		
+		textField = new JTextField();
+		textField.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+		textField.setBounds(287, 11, 245, 28);
+		panel_1.add(textField);
+		textField.setColumns(10);
+		
+		JLabel lblOBuscaPor = new JLabel("Busca por categor\u00EDa:");
+		lblOBuscaPor.setFont(new Font("Segoe UI Semilight", Font.PLAIN, 14));
+		lblOBuscaPor.setForeground(new Color(255, 255, 255));
+		lblOBuscaPor.setBounds(160, 52, 122, 21);
+		panel_1.add(lblOBuscaPor);
+		
+		JComboBox comboBox = new JComboBox();
+		comboBox.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+		comboBox.setBackground(new Color(255, 255, 255));
+		comboBox.setBounds(287, 50, 245, 28);
+		panel_1.add(comboBox);
+		comboBox.setModel(new DefaultComboBoxModel(
+                new String[] {"Dulces", "Enlatados", "Salsas", "Reposteria","Telefonia"}));
+		
+		JLabel lblProductosDisponibles = new JLabel("Productos disponibles:");
+		lblProductosDisponibles.setHorizontalAlignment(SwingConstants.CENTER);
+		lblProductosDisponibles.setFont(new Font("Segoe UI", Font.BOLD, 15));
+		lblProductosDisponibles.setBounds(10, 167, 674, 21);
+		panel.add(lblProductosDisponibles);
         
         //Renderizar tabla para que admita imagenes y botones
         tablaProductos.setDefaultRenderer(Object.class, new Render());
@@ -178,7 +227,11 @@ public class Principal extends JFrame{
         
         //Agregar nueva fila
         public void AgregarFila(String nombre, float precio, String categoria,String url) {
-        	JButton btnAgregar = new JButton("Agregar");
+        	JButton btnAgregar = new JButton("");
+        	btnAgregar.setIcon(new ImageIcon(Principal.class.getResource("/img/anadir-btn.png")));
+        	btnAgregar.setOpaque(true);
+        	btnAgregar.setContentAreaFilled(false);
+        	btnAgregar.setBackground(Color.WHITE);
         	JLabel imagen = new JLabel("");
     		ImageIcon imagenProducto = new ImageIcon(new ImageIcon(Principal.class.getResource(url)).getImage().getScaledInstance(50, 50,Image.SCALE_DEFAULT));
     		imagen.setIcon(imagenProducto);
