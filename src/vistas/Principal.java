@@ -72,6 +72,11 @@ public class Principal extends JFrame{
 		initialize();
 	}
 
+	public void cerrarSesion() {
+        WindowEvent wev = new WindowEvent(this, WindowEvent.WINDOW_CLOSING);
+        Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(wev);
+	}
+	
 	/**
 	 * Initialize the contents of the frame.
 	 */
@@ -140,27 +145,32 @@ public class Principal extends JFrame{
 		panel_1.setLayout(null);
 		
 		JLabel lblBuscar = new JLabel("Busca un producto:");
-		lblBuscar.setFont(new Font("Segoe UI Semilight", Font.PLAIN, 14));
+		lblBuscar.setHorizontalAlignment(SwingConstants.RIGHT);
+		lblBuscar.setFont(new Font("Segoe UI", Font.PLAIN, 14));
 		lblBuscar.setForeground(new Color(255, 255, 255));
-		lblBuscar.setBounds(160, 13, 117, 20);
+		ImageIcon buscar = new ImageIcon(new ImageIcon(Principal.class.getResource("/img/search.png")).getImage().getScaledInstance(20, 20, Image.SCALE_DEFAULT));
+		lblBuscar.setIcon(buscar);
+        lblBuscar.setBounds(147, 13, 142, 20);
 		panel_1.add(lblBuscar);
 		
 		textField = new JTextField();
 		textField.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-		textField.setBounds(287, 11, 245, 28);
+		textField.setBounds(294, 11, 245, 28);
 		panel_1.add(textField);
 		textField.setColumns(10);
 		
 		JLabel lblOBuscaPor = new JLabel("Busca por categor\u00EDa:");
-		lblOBuscaPor.setFont(new Font("Segoe UI Semilight", Font.PLAIN, 14));
+		lblOBuscaPor.setHorizontalAlignment(SwingConstants.RIGHT);
+		lblOBuscaPor.setFont(new Font("Segoe UI", Font.PLAIN, 14));
 		lblOBuscaPor.setForeground(new Color(255, 255, 255));
-		lblOBuscaPor.setBounds(160, 52, 122, 21);
+		lblOBuscaPor.setIcon(buscar);
+		lblOBuscaPor.setBounds(142, 52, 147, 20);
 		panel_1.add(lblOBuscaPor);
 		
 		JComboBox comboBox = new JComboBox();
 		comboBox.setFont(new Font("Segoe UI", Font.PLAIN, 12));
 		comboBox.setBackground(new Color(255, 255, 255));
-		comboBox.setBounds(287, 50, 245, 28);
+		comboBox.setBounds(294, 50, 245, 28);
 		panel_1.add(comboBox);
 		comboBox.setModel(new DefaultComboBoxModel(
                 new String[] {"Dulces", "Enlatados", "Salsas", "Reposteria","Telefonia"}));
@@ -170,6 +180,21 @@ public class Principal extends JFrame{
 		lblProductosDisponibles.setFont(new Font("Segoe UI", Font.BOLD, 15));
 		lblProductosDisponibles.setBounds(10, 167, 674, 21);
 		panel.add(lblProductosDisponibles);
+		
+		JButton btnCerrarSesin = new JButton("Cerrar sesi\u00F3n");
+		btnCerrarSesin.setFocusable(false);
+		btnCerrarSesin.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				cerrarSesion();
+			}
+		});
+		btnCerrarSesin.setBackground(new Color(255, 255, 255));
+		btnCerrarSesin.setFont(new Font("Segoe UI Semilight", Font.PLAIN, 12));
+		btnCerrarSesin.setBorder(new LineBorder(new Color(102, 205, 170), 2));
+		btnCerrarSesin.setContentAreaFilled(false);
+		btnCerrarSesin.setOpaque(true);
+		btnCerrarSesin.setBounds(465, 11, 99, 23);
+		panel.add(btnCerrarSesin);
         
         //Renderizar tabla para que admita imagenes y botones
         tablaProductos.setDefaultRenderer(Object.class, new Render());
