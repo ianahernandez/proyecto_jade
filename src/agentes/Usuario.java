@@ -98,17 +98,17 @@ public class Usuario extends Agent{
         System.out.println(this.getLocalName() + " finalizado");
     }
 	
-	public void agregarCarrito(Producto producto){    	
+	public void agregarCarrito(String codigo){    	
         ACLMessage msg = new ACLMessage(ACLMessage.REQUEST);
         msg.addReceiver(new AID("carrito"+this.getLocalName(), AID.ISLOCALNAME));
         msg.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST);
         msg.setReplyByDate(new Date(System.currentTimeMillis() + 10000));
-        msg.setContent("agregar");
+        msg.setContent(codigo);
 
-        // Agregar comportamiento AchieveREInitiator (Autenticar persona)
+        // Agregar comportamiento AchieveREInitiator (Agregar un producto al carrito)
         addBehaviour(new AchieveREInitiator(this, msg) {
             protected void handleInform(ACLMessage inform) {
-                System.out.println(inform.getSender().getLocalName() + " ha iniciado sesión");
+                System.out.println(inform.getSender().getLocalName() + "ha agregado el producto "+codigo+" al carrito");
             }
 
             protected void handleRefuse(ACLMessage refuse) {
@@ -118,7 +118,7 @@ public class Usuario extends Agent{
             protected void handleFailure(ACLMessage failure) {
                 if (failure.getSender().equals(myAgent.getAMS())) {
                     // Mensaje de la plataforma JADE: El destinatario no existe
-                    System.out.println("El usuario no se encuentra registrado");
+                    System.out.println("El carrito no está disponible");
                 } else {
                     System.out.println(failure.getSender().getLocalName() + ": " + failure.getContent());
                 }

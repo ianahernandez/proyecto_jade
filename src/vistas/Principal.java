@@ -19,6 +19,11 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.scene.control.Button;
+import javafx.scene.image.ImageView;
+
 import java.awt.Font;
 import java.awt.Image;
 import java.awt.Color;
@@ -167,14 +172,15 @@ public class Principal extends JFrame{
         tablaProductos.setDefaultRenderer(Object.class, new Render());
         
         //Llenar la tablar con todos los productos
-        cargarProductos();
+        cargarProductos(listaProductos());
         
         //Ajuste de ancho de las columnas
         TableColumnModel columnModel = tablaProductos.getColumnModel();
         columnModel.getColumn(0).setPreferredWidth(50);
-        columnModel.getColumn(1).setPreferredWidth(350);
-        columnModel.getColumn(2).setPreferredWidth(150);
-        columnModel.getColumn(3).setPreferredWidth(100);
+        columnModel.getColumn(1).setPreferredWidth(50);
+        columnModel.getColumn(2).setPreferredWidth(350);
+        columnModel.getColumn(3).setPreferredWidth(150);
+        columnModel.getColumn(4).setPreferredWidth(100);
         
         //Accion del boton agregarAlCarrito
         tablaProductos.addMouseListener(new MouseAdapter() {
@@ -189,7 +195,8 @@ public class Principal extends JFrame{
 					if(value instanceof JButton) {
 						((JButton)value).doClick();
 						JButton boton = (JButton)value;
-						System.out.println("Agregar el producto "+ tablaProductos.getValueAt(row, 1));
+						System.out.println("Agregar el producto "+ tablaProductos.getValueAt(row, 0));
+						agente.agregarCarrito((String) tablaProductos.getValueAt(row, 0));
 					}
 					
 				}
@@ -205,7 +212,7 @@ public class Principal extends JFrame{
 
             },
             new String [] {
-                "Imagen","Producto", "Categoria","Precio","Agregar"
+                "Codigo","Imagen","Producto", "Categoria","Precio","Agregar"
             }
         ) {
             /*Class[] types = new Class [] {
@@ -226,7 +233,7 @@ public class Principal extends JFrame{
         
         
         //Agregar nueva fila
-        public void AgregarFila(String nombre, float precio, String categoria,String url) {
+        public void AgregarFila(String codigo, String nombre, float precio, String categoria,String url) {
         	JButton btnAgregar = new JButton("");
         	btnAgregar.setIcon(new ImageIcon(Principal.class.getResource("/img/anadir-btn.png")));
         	btnAgregar.setOpaque(true);
@@ -236,22 +243,38 @@ public class Principal extends JFrame{
     		ImageIcon imagenProducto = new ImageIcon(new ImageIcon(Principal.class.getResource(url)).getImage().getScaledInstance(50, 50,Image.SCALE_DEFAULT));
     		imagen.setIcon(imagenProducto);
     		imagen.setBounds(543, 11, 30, 30);
-            Object[] fila = new Object[5];
-            fila[0] = imagen;
-            fila[1] = nombre;
-            fila[2] = categoria;
-            fila[3] = precio;
-            fila[4] = btnAgregar;
+            Object[] fila = new Object[6];
+            fila[0] = codigo;
+            fila[1] = imagen;
+            fila[2] = nombre;
+            fila[3] = categoria;
+            fila[4] = precio;
+            fila[5] = btnAgregar;
             modelo.addRow(fila);
             tablaProductos.setModel(modelo);
         }
         
      //Cargar todos los productos   
-	 public void cargarProductos() {
-		 AgregarFila("Hershey's Chocolate Syrup 24 oz (680 g)", (float) 4.14 ,"Dulces","/img/products/A123.png");
-		 AgregarFila("Oreo Thins Sandwich Cookies, 10.1 oz (287 g)", (float) 3.96 ,"Dulces","/img/products/A124.png");
-		 AgregarFila("M&M's Sharing Size Peanut Butter Milk Chocolate Candy 9.6 oz (272.2 g)", (float) 3.62 ,"Dulces","/img/products/A125.png");
-		 AgregarFila("Nutella Ferrero Chocolate Hazelnut Spread 26.5oz (750 g)", (float) 8.5 ,"Dulces","/img/products/A126.png");
+	 public void cargarProductos(ArrayList<Producto> productos) {	 
 		 
+		 for(Producto producto:  productos) {
+			 AgregarFila(producto.getCodigo(),producto.getNombre(),producto.getPrecio(),producto.getCategoria(),producto.getImagen());
+		 }		 
 	 }
+	 
+	 public ArrayList<Producto> listaProductos(){
+	    	
+	    	ArrayList<Producto> products = new ArrayList<Producto>();
+	    	
+	    	Producto producto1 = new Producto("A123","Nutella Ferrero Chocolate Hazelnut Spread 26.5oz (750 g)", (float) 8.5 ,"Dulces", "/img/products/A123.png");
+	    	Producto producto2 = new Producto("A124","Hershey's Chocolate Syrup 24 oz (680 g)", (float) 4.14 ,"Dulces","/img/products/A124.png");
+	    	Producto producto3 = new Producto("A125","Oreo Thins Sandwich Cookies, 10.1 oz (287 g)", (float) 3.96 ,"Dulces","/img/products/A125.png");
+	    	Producto producto4 = new Producto("A126","M&M's Sharing Size Peanut Butter Milk Chocolate Candy 9.6 oz (272.2 g)", (float) 3.62 ,"Dulces","/img/products/A126.png");	
+	    	products.add(producto1);
+	    	products.add(producto2);
+	    	products.add(producto3);
+	    	products.add(producto4);
+	    	return products;
+	    	
+	    }
 }
