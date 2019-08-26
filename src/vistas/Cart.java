@@ -20,6 +20,9 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.ActionEvent;
 import javax.swing.JTextField;
+import javax.swing.JScrollPane;
+import javax.swing.ListSelectionModel;
+import java.awt.Dimension;
 
 public class Cart extends JFrame{
 	
@@ -27,7 +30,6 @@ public class Cart extends JFrame{
 	
 	private JFrame Carrito;
 	private final JPanel panel = new JPanel();
-	private JTable table;
 	
 	@SuppressWarnings("serial")
 	private DefaultTableModel modelo = new DefaultTableModel(
@@ -47,6 +49,7 @@ public class Cart extends JFrame{
         };
 	private JTextField Total;
 	private JTextField Subtotal;
+	private JTable tablaCarrito;
 
 	/**
 	 * Launch the application.
@@ -120,11 +123,26 @@ public class Cart extends JFrame{
 		panel.add(central);
 		central.setLayout(null);
 		
-		table = new JTable();
-		table.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-		table.setModel(modelo);
-		table.setBounds(22, 27, 550, 217);
-		central.add(table);
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(22, 27, 550, 217);
+		central.add(scrollPane);
+		
+		tablaCarrito = new JTable();
+		tablaCarrito.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+		tablaCarrito.setGridColor(new Color(102, 205, 170));
+		tablaCarrito.setSelectionBackground(new Color(102, 205, 170));
+		tablaCarrito.setShowVerticalLines(false);
+		tablaCarrito.setSize(new Dimension(300, 300));
+		tablaCarrito.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		tablaCarrito.setRowSelectionAllowed(true);
+		tablaCarrito.setRowHeight(30);
+		tablaCarrito.setColumnSelectionAllowed(false);
+		tablaCarrito.setModel(modelo);
+		scrollPane.setViewportView(tablaCarrito);
+		tablaCarrito.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 12));
+		tablaCarrito.getTableHeader().setOpaque(false);
+		tablaCarrito.getTableHeader().setBackground(new Color(102, 205, 170));
+		tablaCarrito.getTableHeader().setForeground(new Color(255, 255, 255));
 		
 		JButton btnLimpiar = new JButton("Limpiar Carrito");
 		btnLimpiar.addActionListener(new ActionListener() {

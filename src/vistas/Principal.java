@@ -98,12 +98,20 @@ public class Principal extends JFrame{
 		
         //Definicion y configuraciones básicas de la tabla
 		tablaProductos = new JTable();	
+		tablaProductos.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+		tablaProductos.setGridColor(new Color(102, 205, 170));
+		tablaProductos.setSelectionBackground(new Color(102, 205, 170));
+		tablaProductos.setShowVerticalLines(false);
 		tablaProductos.setSize(new Dimension(300, 300));
         tablaProductos.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         scrollPane.setViewportView(tablaProductos);
         tablaProductos.setColumnSelectionAllowed(false);
         tablaProductos.setRowSelectionAllowed(true);
         tablaProductos.setRowHeight(30);
+        tablaProductos.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 12));
+        tablaProductos.getTableHeader().setOpaque(false);
+        tablaProductos.getTableHeader().setBackground(new Color(102, 205, 170));
+        tablaProductos.getTableHeader().setForeground(new Color(255, 255, 255));
         
         JLabel lblSmartstore = new JLabel("SmartStore");
         lblSmartstore.setFont(new Font("Segoe UI", Font.BOLD | Font.ITALIC, 20));
