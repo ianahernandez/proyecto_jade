@@ -7,12 +7,15 @@ import java.awt.Toolkit;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.Font;
 import java.awt.Image;
 import java.awt.Color;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.UIManager;
+import javax.swing.border.LineBorder;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
@@ -67,16 +70,23 @@ public class Cart extends JFrame{
 	 * Create the application.
 	 */
 	public Cart(agentes.Carrito carrito) {
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		agente = carrito;
 		addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                //agente.doDelete();
+            	System.out.println("Sesion terminada");
+            	//agente.doDelete();
             }
         });
 		initialize();
 	}
 
+	public void cerrarCarrito() {
+        WindowEvent wev = new WindowEvent(this, WindowEvent.WINDOW_CLOSING);
+        Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(wev);
+	}
+	
 	/**
 	 * Initialize the contents of the frame.
 	 */
@@ -85,7 +95,6 @@ public class Cart extends JFrame{
 		setTitle("Mi Carrito - "+ agente.getLocalName());
 		setResizable(false);
 		setBounds(100, 100, 600, 450);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		getContentPane().setLayout(null);
 		panel.setBackground(new Color(102, 205, 170));
 		panel.setBounds(0, 0, 594, 421);
@@ -105,6 +114,11 @@ public class Cart extends JFrame{
 		panel.add(label_1);
 		
 		JButton btnAtras = new JButton("< Atr\u00E1s");
+		btnAtras.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				cerrarCarrito();
+			}
+		});
 		btnAtras.setForeground(new Color(255, 255, 255));
 		btnAtras.setBackground(new Color(102, 205, 170));
 		btnAtras.setFont(new Font("Segoe UI Semibold", Font.PLAIN, 13));
@@ -120,7 +134,7 @@ public class Cart extends JFrame{
 		central.setLayout(null);
 		
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(22, 27, 550, 217);
+		scrollPane.setBounds(22, 27, 550, 210);
 		central.add(scrollPane);
 		
 		tablaCarrito = new JTable();
@@ -144,48 +158,48 @@ public class Cart extends JFrame{
 		JButton btnLimpiar = new JButton("Limpiar Carrito");
 		btnLimpiar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				if (modelo.getRowCount() > 0) {
-			            int cant = modelo.getRowCount();
-			            for (int i = 0; i < cant; i++) {
-			                modelo.removeRow(0);
-			                agente.setProductos(new ArrayList<Producto>());
-			            }
-			        }
-			        Subtotal.setText("0");
-			        Total.setText("0");
+				Limpiar();
 			}
 		});
+		btnLimpiar.setBorder(new LineBorder(new Color(102, 205, 170), 2));
+		btnLimpiar.setContentAreaFilled(false);
+		btnLimpiar.setOpaque(true);
 		btnLimpiar.setFont(new Font("Segoe UI Semilight", Font.PLAIN, 12));
-		btnLimpiar.setBounds(22, 322, 109, 25);
+		btnLimpiar.setBounds(22, 312, 109, 35);
 		central.add(btnLimpiar);
 		
 		JButton btnProcesarPago = new JButton("Procesar Pago");
+		btnProcesarPago.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ProcesarPago();
+			}
+		});
 		btnProcesarPago.setForeground(new Color(255, 255, 255));
 		btnProcesarPago.setFont(new Font("Segoe UI Semibold", Font.PLAIN, 14));
 		btnProcesarPago.setBackground(new Color(102, 205, 170));
-		btnProcesarPago.setBounds(439, 322, 133, 25);
+		btnProcesarPago.setBounds(439, 312, 133, 35);
 		btnProcesarPago.setContentAreaFilled(false);
 		btnProcesarPago.setOpaque(true);
 		central.add(btnProcesarPago);
 		
 		Total = new JTextField();
-		Total.setBounds(439, 291, 133, 20);
+		Total.setBounds(439, 279, 133, 20);
 		central.add(Total);
 		Total.setColumns(10);
 		
 		Subtotal = new JTextField();
-		Subtotal.setBounds(439, 260, 133, 20);
+		Subtotal.setBounds(439, 248, 133, 20);
 		central.add(Subtotal);
 		Subtotal.setColumns(10);
 		
 		JLabel lblSubtotalBs = new JLabel("Subtotal Bs.");
 		lblSubtotalBs.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-		lblSubtotalBs.setBounds(357, 263, 72, 14);
+		lblSubtotalBs.setBounds(357, 251, 72, 14);
 		central.add(lblSubtotalBs);
 		
 		JLabel lblTotalBs = new JLabel("Total Bs.");
 		lblTotalBs.setFont(new Font("Segoe UI Black", Font.PLAIN, 14));
-		lblTotalBs.setBounds(368, 294, 61, 14);
+		lblTotalBs.setBounds(368, 282, 61, 14);
 		central.add(lblTotalBs);
 		//Renderizar tabla para que admita imagenes y botones
 		tablaCarrito.setDefaultRenderer(Object.class, new Render());
@@ -219,7 +233,25 @@ public class Cart extends JFrame{
 		cargarProductos(agente.getProductos());
 	}
 	       
-        
+	public void Limpiar() {
+		if (modelo.getRowCount() > 0) {
+			int cant = modelo.getRowCount();
+	        for (int i = 0; i < cant; i++) {
+	            modelo.removeRow(0);
+	            agente.setProductos(new ArrayList<Producto>());
+	        }
+	    }
+		else JOptionPane.showMessageDialog(this, "El carrito ya está vacío.", "Error", JOptionPane.ERROR_MESSAGE);
+	    Subtotal.setText("0");
+	    Total.setText("0");
+	}
+            
+	public void ProcesarPago() {
+		if (modelo.getRowCount() > 0)
+			new Payment(this);
+		else JOptionPane.showMessageDialog(this, "Ingrese productos al carrito para realizar un pago.", "Error", JOptionPane.ERROR_MESSAGE);
+	}
+	
     //Agregar nueva fila en la tabla
 	public void AgregarFila(String codigo, String nombre, float precio, String categoria,String url) {
     	JLabel imagen = new JLabel("");

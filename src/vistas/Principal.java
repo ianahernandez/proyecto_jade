@@ -59,6 +59,7 @@ public class Principal extends JFrame{
 	 * Create the application.
 	 */
 	public Principal(agentes.Usuario usuario) {
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setIconImage(Toolkit.getDefaultToolkit().getImage(Principal.class.getResource("/img/logo.png")));
 		setResizable(false);
 		agente = usuario;
@@ -235,6 +236,12 @@ public class Principal extends JFrame{
         Carrito.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				agente.abrirCarrito();
+			}
+		});
+        
+        Usuario.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				agente.abrirPerfil();
 			}
 		});
 
