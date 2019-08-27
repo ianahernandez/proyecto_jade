@@ -125,5 +125,31 @@ public class Usuario extends Agent{
             }
         });
 	}
+	
+	public void abrirCarrito(){     	
+        ACLMessage msg = new ACLMessage(ACLMessage.REQUEST);
+        msg.addReceiver(new AID("carrito"+this.getLocalName(), AID.ISLOCALNAME));
+        msg.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST);
+        msg.setReplyByDate(new Date(System.currentTimeMillis() + 10000));
+        msg.setContent("abrir");
+        addBehaviour(new AchieveREInitiator(this, msg) {
+            protected void handleInform(ACLMessage inform) {
+                System.out.println(inform.getSender().getLocalName() + " ha iniciado sesión");
+            }
+
+            protected void handleRefuse(ACLMessage refuse) {
+                System.out.println(refuse.getSender().getLocalName() + ": " + refuse.getContent());
+            }
+
+            protected void handleFailure(ACLMessage failure) {
+                if (failure.getSender().equals(myAgent.getAMS())) {
+                    // Mensaje de la plataforma JADE: El destinatario no existe
+                    System.out.println("El usuario no se encuentra registrado");
+                } else {
+                    System.out.println(failure.getSender().getLocalName() + ": " + failure.getContent());
+                }
+            }
+        });
+	}
 
 }

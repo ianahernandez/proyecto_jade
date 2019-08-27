@@ -25,6 +25,14 @@ public class Carrito extends Agent{
 	private ArrayList<Producto> productosPreferidos = new ArrayList<Producto>();
 	private ArrayList<Producto> productos = new ArrayList<Producto>();
 	
+	public ArrayList<Producto> getProductos() {
+		return productos;
+	}
+
+	public void setProductos(ArrayList<Producto> productos) {
+		this.productos = productos;
+	}
+
 	@Override
 	protected void setup() {
 		gui = new vistas.Cart(this);
@@ -58,16 +66,25 @@ public class Carrito extends Agent{
         addBehaviour(new AchieveREResponder(this, template) {
         	
             protected ACLMessage prepareResponse(ACLMessage request) throws NotUnderstoodException, RefuseException {
-            	Producto producto = new Producto();
-            	producto = buscarItem(listaProductos(),(String)request.getContent());
-                if(buscarItem(productos,(String)request.getContent()) != null) {
-                	//Aumentar cantidad
-                    throw new RefuseException("El producto ya está en el carrito, se incrementa la cantidad");
-                }  
-                else {
-                	productos.add(producto);
-                }
-                
+            	if(request.getContent().equals("abrir")) {
+            		gui.setVisible(true);
+            	}
+            	else {
+            		Producto producto = new Producto();
+                	producto = buscarItem(listaProductos(),(String)request.getContent());
+                    if(buscarItem(productos,(String)request.getContent()) != null) {
+                    	//Aumentar cantidad
+                    	 gui.incrementar(producto.getCodigo());
+                        throw new RefuseException("El producto ya está en el carrito, se incrementa la cantidad");
+                       
+                    }  
+                    else {
+                    	productos.add(producto);
+                    	gui.AgregarFila(producto.getCodigo(), producto.getNombre(), producto.getPrecio(), producto.getCategoria(), producto.getImagen());
+                    	//gui.cargarProductos(productos);
+                    }
+            	}
+            	             
                 ACLMessage agree = request.createReply();
                 agree.setPerformative(ACLMessage.AGREE);
                 return agree;
@@ -80,8 +97,7 @@ public class Carrito extends Agent{
             }
             
         });
-        
-        
+               
 	}	
 	
 	public Producto buscarItem(ArrayList<Producto> listaProductos, String codigo) {

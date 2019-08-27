@@ -13,16 +13,27 @@ import java.awt.Color;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.UIManager;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumnModel;
+
+import modelos.Producto;
+import utilidades.Render;
+
 import javax.swing.JTable;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
+import java.util.Vector;
 import java.awt.event.ActionEvent;
 import javax.swing.JTextField;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 import java.awt.Dimension;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeEvent;
 
 public class Cart extends JFrame{
 	
@@ -37,35 +48,20 @@ public class Cart extends JFrame{
 
             },
             new String [] {
-                "Imagen", "Producto", "Precio", "Cantidad", "Total"
+                "Codigo","Imagen", "Producto", "Precio", "Cantidad", "Total"
             }
         ) {
             boolean[] canEdit = new boolean [] {
                 false, false
             };
             public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
+                return false;
             }
         };
 	private JTextField Total;
 	private JTextField Subtotal;
 	private JTable tablaCarrito;
 
-	/**
-	 * Launch the application.
-	 */
-//	public static void main(String[] args) {
-//		EventQueue.invokeLater(new Runnable() {
-//			public void run() {
-//				try {
-//					Cart window = new Cart();
-//					window.Carrito.setVisible(true);
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//				}
-//			}
-//		});
-//	}
 
 	/**
 	 * Create the application.
@@ -86,7 +82,7 @@ public class Cart extends JFrame{
 	 */
 	private void initialize() {
 		setIconImage(Toolkit.getDefaultToolkit().getImage(Cart.class.getResource("/img/logo.png")));
-		setTitle("Mi Carrito");
+		setTitle("Mi Carrito - "+ agente.getLocalName());
 		setResizable(false);
 		setBounds(100, 100, 600, 450);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -128,6 +124,7 @@ public class Cart extends JFrame{
 		central.add(scrollPane);
 		
 		tablaCarrito = new JTable();
+
 		tablaCarrito.setFont(new Font("Segoe UI", Font.PLAIN, 12));
 		tablaCarrito.setGridColor(new Color(102, 205, 170));
 		tablaCarrito.setSelectionBackground(new Color(102, 205, 170));
@@ -151,6 +148,7 @@ public class Cart extends JFrame{
 			            int cant = modelo.getRowCount();
 			            for (int i = 0; i < cant; i++) {
 			                modelo.removeRow(0);
+			                agente.setProductos(new ArrayList<Producto>());
 			            }
 			        }
 			        Subtotal.setText("0");
@@ -189,5 +187,86 @@ public class Cart extends JFrame{
 		lblTotalBs.setFont(new Font("Segoe UI Black", Font.PLAIN, 14));
 		lblTotalBs.setBounds(368, 294, 61, 14);
 		central.add(lblTotalBs);
+		//Renderizar tabla para que admita imagenes y botones
+		tablaCarrito.setDefaultRenderer(Object.class, new Render());
+		
+		//Evento que indica cuando han cambiado los valores en la tabla
+		modelo.addTableModelListener(new TableModelListener() {
+
+			@Override
+			public void tableChanged(TableModelEvent arg0) {
+				
+				//Calculo de nuevo total y subtotal
+				
+				float total = 0;
+				for(int i=0; i<modelo.getRowCount(); i++) {
+					total = total + (float)modelo.getValueAt(i, 5);
+				}
+				Subtotal.setText(String.valueOf(Math.round(total*100)/100d));
+				Total.setText(String.valueOf(Math.round(total*100)/100d));
+			}
+			
+		});
+			
+		//Ajuste de ancho de las columnas
+        TableColumnModel columnModel = tablaCarrito.getColumnModel();
+        columnModel.getColumn(0).setPreferredWidth(50);
+        columnModel.getColumn(1).setPreferredWidth(50);
+        columnModel.getColumn(2).setPreferredWidth(350);
+        columnModel.getColumn(3).setPreferredWidth(150);
+        columnModel.getColumn(4).setPreferredWidth(100);
+        
+		cargarProductos(agente.getProductos());
 	}
+	       
+        
+    //Agregar nueva fila en la tabla
+	public void AgregarFila(String codigo, String nombre, float precio, String categoria,String url) {
+    	JLabel imagen = new JLabel("");
+		ImageIcon imagenProducto = new ImageIcon(new ImageIcon(Principal.class.getResource(url)).getImage().getScaledInstance(50, 50,Image.SCALE_DEFAULT));
+		imagen.setIcon(imagenProducto);
+		imagen.setBounds(543, 11, 30, 30);
+        Object[] fila = new Object[6];
+        fila[0] = codigo;
+        fila[1] = imagen;
+        fila[2] = nombre;
+        fila[3] = precio;
+        fila[4] = 1;
+        fila[5] = precio;
+        modelo.addRow(fila);
+        tablaCarrito.setModel(modelo);
+    }
+	
+	//Cargar productos en la tabla  
+	public void cargarProductos(ArrayList<Producto> productos) {	 	 
+		 for(Producto producto:  productos) {
+			 AgregarFila(producto.getCodigo(),producto.getNombre(),producto.getPrecio(),producto.getCategoria(),producto.getImagen());
+		 }		 
+	 }
+
+	public JTable getTablaCarrito() {
+		return tablaCarrito;
+	}
+
+	public void setTablaCarrito(JTable tablaCarrito) {
+		this.tablaCarrito = tablaCarrito;
+	}
+	
+	//Incrementa la cantidad de un producto que ya esta añadido al carrito
+	public void incrementar(String codigo) {
+		for(Object item: modelo.getDataVector()) {
+			if(((Vector)item).get(0).toString().equals(codigo))
+			{
+				int cant = (int)((Vector)item).get(4) + 1;
+				((Vector)item).set(4, cant);
+				float precio = (float)((Vector)item).get(3);
+				((Vector)item).set(5, cant*precio);
+				modelo.fireTableDataChanged();
+				tablaCarrito.setModel(modelo);
+				
+			}			
+		}
+	}
+    
+    
 }

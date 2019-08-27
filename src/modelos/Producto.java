@@ -26,6 +26,7 @@ public class Producto {
 		super();
 		this.codigo = codigo;
 		this.nombre = nombre;
+		this.precio = precio;
 		this.imagen = imagen;
 		this.categoria = categoria;
 	}
