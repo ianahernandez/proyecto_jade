@@ -187,4 +187,14 @@ public class Usuario extends Agent{
         });
 	}
 
+	public ArrayList<Producto> productosCategoria(ArrayList<Producto> listaProductos, String categoria) {
+    	ArrayList<Producto> products = new ArrayList<Producto>();
+		for(Producto producto: listaProductos) {
+			if(producto.getCategoria()==categoria || producto.getCategoria().equals(categoria)) {
+				products.add(producto);
+			}			
+		}
+		return products;
+	}
+
 }

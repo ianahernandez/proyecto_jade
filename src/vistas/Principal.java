@@ -174,7 +174,7 @@ public class Principal extends JFrame{
 		comboBox.setBounds(294, 50, 245, 28);
 		panel_1.add(comboBox);
 		comboBox.setModel(new DefaultComboBoxModel(
-                new String[] {"Dulces", "Enlatados", "Salsas", "Reposteria","Telefonia"}));
+                new String[] {"Todo","Dulces", "Enlatados", "Salsas", "Reposteria","Telefonía"}));
 		
 		JLabel lblProductosDisponibles = new JLabel("Productos disponibles:");
 		lblProductosDisponibles.setHorizontalAlignment(SwingConstants.CENTER);
@@ -230,6 +230,15 @@ public class Principal extends JFrame{
 					
 				}
 				
+			}
+		});
+        
+        comboBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				if(comboBox.getSelectedItem().toString().equals("Todo"))
+					cargarProductos(listaProductos());
+				else
+				productosEncontrados((String)comboBox.getSelectedItem().toString());
 			}
 		});
         
@@ -297,7 +306,7 @@ public class Principal extends JFrame{
         
      //Cargar productos   
         public void cargarProductos(ArrayList<Producto> productos) {	 
-   		 
+   		 Limpiar();
    		 for(Producto producto:  productos) {
    			 AgregarFila(producto.getCodigo(),producto.getNombre(),producto.getPrecio(),producto.getCategoria(),producto.getImagen());
    		 }		 
@@ -308,7 +317,7 @@ public class Principal extends JFrame{
        	ArrayList<Producto> products = new ArrayList<Producto>();
        	Producto producto1 = new Producto("A123","Nutella Ferrero Chocolate Hazelnut Spread 26.5oz (750 g)", (float) 8.5 ,"Dulces", "/img/products/A123.png");
        	Producto producto2 = new Producto("A124","Hershey's Chocolate Syrup 24 oz (680 g)", (float) 4.14 ,"Dulces","/img/products/A124.png");
-       	Producto producto3 = new Producto("A125","Oreo Thins Sandwich Cookies, 10.1 oz (287 g)", (float) 3.96 ,"Dulces","/img/products/A125.png");
+       	Producto producto3 = new Producto("A125","Oreo Thins Sandwich Cookies, 10.1 oz (287 g)", (float) 3.96 ,"Telefonía","/img/products/A125.png");
        	Producto producto4 = new Producto("A126","M&M's Sharing Size Peanut Butter Milk Chocolate Candy 9.6 oz (272.2 g)", (float) 3.62 ,"Dulces","/img/products/A126.png");	
        	products.add(producto1);
        	products.add(producto2);
@@ -317,4 +326,25 @@ public class Principal extends JFrame{
        	return products;
    	    	
    	 }
+
+   	 //Cargar productos buscados   
+        public void productosEncontrados(String categoria) {
+        ArrayList<Producto> productos = agente.productosCategoria(listaProductos(), categoria);
+        if(productos.size()==0)
+        	JOptionPane.showMessageDialog(this, "No hay productos en esta categoría.", "Error", JOptionPane.ERROR_MESSAGE);
+        else {
+	        Limpiar();
+	   		cargarProductos(productos);
+	      }
+   	 }
+        
+        //limpiar modelo para hacer busquedas
+        public void Limpiar() {
+            if (modelo.getRowCount() > 0) {
+              int cant = modelo.getRowCount();
+                  for (int i = 0; i < cant; i++) {
+                      modelo.removeRow(0);
+                  }
+              }
+          }
    }
