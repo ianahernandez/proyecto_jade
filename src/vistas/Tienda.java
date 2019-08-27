@@ -44,6 +44,7 @@ public class Tienda extends JFrame{
 	
 	
 	public Tienda(agentes.Tienda tienda) {
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setIconImage(Toolkit.getDefaultToolkit().getImage(Tienda.class.getResource("/img/logo.png")));
 		setResizable(false);
 		agente = tienda;

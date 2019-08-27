@@ -5,6 +5,8 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import java.awt.Toolkit;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.Font;
 import java.awt.Image;
 import java.awt.Color;
@@ -20,34 +22,26 @@ import java.util.Calendar;
 import javax.swing.JPasswordField;
 import javax.swing.JButton;
 import javax.swing.border.LineBorder;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
-public class Payment {
+public class Payment extends JFrame {
 
-	private JFrame Pago;
 	private JTextField nroTarjeta;
 	private JTextField nombre;
 	private JPasswordField csv;
+	private Cart cart;
 
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					Payment window = new Payment();
-					window.Pago.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-
+	
 	/**
 	 * Create the application.
 	 */
-	public Payment() {
+	public Payment(Cart ventana) {
+		cart = ventana;
+		setVisible(true);
 		initialize();
 	}
 
@@ -55,13 +49,12 @@ public class Payment {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		Pago = new JFrame();
-		Pago.setTitle("Procesar Pago");
-		Pago.setIconImage(Toolkit.getDefaultToolkit().getImage(Payment.class.getResource("/img/logo.png")));
-		Pago.setResizable(false);
-		Pago.setBounds(100, 100, 600, 450);
-		Pago.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		Pago.getContentPane().setLayout(null);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		setTitle("Procesar Pago");
+		setIconImage(Toolkit.getDefaultToolkit().getImage(Payment.class.getResource("/img/logo.png")));
+		setResizable(false);
+		setBounds(100, 100, 600, 450);
+		getContentPane().setLayout(null);
 		ImageIcon img = new ImageIcon(new ImageIcon(Principal.class.getResource("/img/payment.png")).getImage().getScaledInstance(320, 140, Image.SCALE_DEFAULT));
 		ImageIcon visa = new ImageIcon(new ImageIcon(Principal.class.getResource("/img/visa.png")).getImage().getScaledInstance(50, 50, Image.SCALE_DEFAULT));
 		ImageIcon master = new ImageIcon(new ImageIcon(Principal.class.getResource("/img/mastercard.png")).getImage().getScaledInstance(50, 50, Image.SCALE_DEFAULT));
@@ -71,12 +64,12 @@ public class Payment {
 		ImageIcon online = new ImageIcon(new ImageIcon(Principal.class.getResource("/img/payment-online.png")).getImage().getScaledInstance(50, 50, Image.SCALE_DEFAULT));
 		pago4.setIcon(online);
 		pago4.setBounds(521, 334, 50, 50);
-		Pago.getContentPane().add(pago4);
+		getContentPane().add(pago4);
 		
 		JPanel panel = new JPanel();
 		panel.setBackground(new Color(102, 205, 170));
 		panel.setBounds(0, 39, 285, 42);
-		Pago.getContentPane().add(panel);
+		getContentPane().add(panel);
 		panel.setLayout(null);
 		
 		JLabel lblDetallesDeTarjeta = new JLabel("Detalles de la tarjeta");
@@ -90,31 +83,31 @@ public class Payment {
 		JLabel lblNmeroDeTarjeta = new JLabel("N\u00FAmero de tarjeta");
 		lblNmeroDeTarjeta.setFont(new Font("Segoe UI", Font.PLAIN, 14));
 		lblNmeroDeTarjeta.setBounds(10, 110, 165, 20);
-		Pago.getContentPane().add(lblNmeroDeTarjeta);
+		getContentPane().add(lblNmeroDeTarjeta);
 		
 		nroTarjeta = new JTextField();
 		nroTarjeta.setToolTipText("");
 		nroTarjeta.setFont(new Font("Segoe UI", Font.PLAIN, 14));
 		nroTarjeta.setColumns(10);
 		nroTarjeta.setBounds(10, 132, 254, 29);
-		Pago.getContentPane().add(nroTarjeta);
+		getContentPane().add(nroTarjeta);
 		
 		JLabel lblNombreDelTitular = new JLabel("Nombre del titular");
 		lblNombreDelTitular.setFont(new Font("Segoe UI", Font.PLAIN, 14));
 		lblNombreDelTitular.setBounds(10, 172, 165, 20);
-		Pago.getContentPane().add(lblNombreDelTitular);
+		getContentPane().add(lblNombreDelTitular);
 		
 		nombre = new JTextField();
 		nombre.setToolTipText("");
 		nombre.setFont(new Font("Segoe UI", Font.PLAIN, 14));
 		nombre.setColumns(10);
 		nombre.setBounds(10, 194, 254, 29);
-		Pago.getContentPane().add(nombre);
+		getContentPane().add(nombre);
 		
 		JLabel lblFechaDeVencimiento = new JLabel("Fecha de vencimiento");
 		lblFechaDeVencimiento.setFont(new Font("Segoe UI", Font.PLAIN, 14));
 		lblFechaDeVencimiento.setBounds(10, 234, 137, 20);
-		Pago.getContentPane().add(lblFechaDeVencimiento);
+		getContentPane().add(lblFechaDeVencimiento);
 		
 		JSpinner fecha = new JSpinner();
 		fecha.setFont(new Font("Segoe UI", Font.PLAIN, 14));
@@ -126,38 +119,50 @@ public class Payment {
 		JSpinner.DateEditor de_fecha = new JSpinner.DateEditor(fecha,"MM/yyyy");
 	    fecha.setEditor(de_fecha);
 		fecha.setBounds(10, 257, 137, 29);
-		Pago.getContentPane().add(fecha);
+		getContentPane().add(fecha);
 		
 		JLabel lblCsvNo = new JLabel("CSV No.");
 		lblCsvNo.setFont(new Font("Segoe UI", Font.PLAIN, 14));
 		lblCsvNo.setBounds(170, 234, 94, 20);
-		Pago.getContentPane().add(lblCsvNo);
+		getContentPane().add(lblCsvNo);
 		
 		csv = new JPasswordField();
+		csv.setColumns(10);
+		csv.setFont(new Font("Segoe UI", Font.PLAIN, 14));
 		csv.setBounds(170, 257, 94, 29);
-		Pago.getContentPane().add(csv);
+		getContentPane().add(csv);
 		
 		JButton btnProcesar = new JButton("Procesar");
+		btnProcesar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Pagar();
+			}
+		});
 		btnProcesar.setContentAreaFilled(false);
 		btnProcesar.setOpaque(true);
 		btnProcesar.setForeground(Color.WHITE);
 		btnProcesar.setFont(new Font("Segoe UI", Font.PLAIN, 14));
 		btnProcesar.setBackground(new Color(102, 205, 170));
 		btnProcesar.setBounds(145, 327, 117, 32);
-		Pago.getContentPane().add(btnProcesar);
+		getContentPane().add(btnProcesar);
 		
 		JButton btnCancelar = new JButton("Cancelar");
+		btnCancelar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				dispose();
+			}
+		});
 		btnCancelar.setBorder(new LineBorder(new Color(102, 205, 170), 2));
 		btnCancelar.setContentAreaFilled(false);
 		btnCancelar.setOpaque(true);
 		btnCancelar.setFont(new Font("Segoe UI", Font.PLAIN, 14));
 		btnCancelar.setBounds(10, 327, 117, 32);
-		Pago.getContentPane().add(btnCancelar);
+		getContentPane().add(btnCancelar);
 		
 		JPanel panel_1 = new JPanel();
 		panel_1.setBackground(new Color(102, 205, 170));
 		panel_1.setBounds(284, 0, 310, 421);
-		Pago.getContentPane().add(panel_1);
+		getContentPane().add(panel_1);
 		panel_1.setLayout(null);
 		
 		JLabel label = new JLabel("SmartStore");
@@ -193,5 +198,14 @@ public class Payment {
 		pago3.setBounds(165, 334, 50, 50);
 		panel_1.add(pago3);
 		pago3.setIcon(amex);
+	}
+	
+	public void Pagar() {
+		if (!nombre.getText().equals("") && !nroTarjeta.getText().equals("") && csv.getPassword().length==3) {
+			JOptionPane.showMessageDialog(this, "Su pago ha sido procesado exitosamente.");
+			cart.Limpiar();
+			dispose();
+		}
+		else JOptionPane.showMessageDialog(this, "Por favor complete los datos para continuar.", "Error", JOptionPane.ERROR_MESSAGE);
 	}
 }
