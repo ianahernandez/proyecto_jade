@@ -196,5 +196,15 @@ public class Usuario extends Agent{
 		}
 		return products;
 	}
+	
+	public ArrayList<Producto> productosNombre(ArrayList<Producto> listaProductos, String nombre) {
+    	ArrayList<Producto> products = new ArrayList<Producto>();
+		for(Producto producto: listaProductos) {
+			if(producto.getNombre().matches(".*"+nombre+".*")) {
+				products.add(producto);
+			}			
+		}
+		return products;
+	}
 
 }
