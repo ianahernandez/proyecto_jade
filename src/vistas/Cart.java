@@ -26,6 +26,8 @@ import utilidades.Render;
 
 import javax.swing.JTable;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
@@ -51,7 +53,7 @@ public class Cart extends JFrame{
 
             },
             new String [] {
-                "Codigo","Imagen", "Producto", "Precio", "Cantidad", "Total"
+                "Codigo","Imagen", "Producto", "Precio", "Cantidad", "Total", "Eliminar"
             }
         ) {
             boolean[] canEdit = new boolean [] {
@@ -108,7 +110,7 @@ public class Cart extends JFrame{
 		panel.add(lblMiCarrito);
 		
 		JLabel label_1 = new JLabel("");
-		ImageIcon carrito = new ImageIcon(new ImageIcon(Principal.class.getResource("/img/cart-logo.png")).getImage().getScaledInstance(30, 30, Image.SCALE_DEFAULT));
+		ImageIcon carrito = new ImageIcon(new ImageIcon(Cart.class.getResource("/img/cart-logo.png")).getImage().getScaledInstance(30, 30, Image.SCALE_DEFAULT));
 		label_1.setIcon(carrito);
 		label_1.setBounds(543, 11, 30, 30);
 		panel.add(label_1);
@@ -226,9 +228,47 @@ public class Cart extends JFrame{
         TableColumnModel columnModel = tablaCarrito.getColumnModel();
         columnModel.getColumn(0).setPreferredWidth(50);
         columnModel.getColumn(1).setPreferredWidth(50);
-        columnModel.getColumn(2).setPreferredWidth(350);
-        columnModel.getColumn(3).setPreferredWidth(150);
-        columnModel.getColumn(4).setPreferredWidth(100);
+        columnModel.getColumn(2).setPreferredWidth(300);
+        columnModel.getColumn(3).setPreferredWidth(120);
+        columnModel.getColumn(4).setPreferredWidth(80);
+        columnModel.getColumn(5).setPreferredWidth(100);
+        
+      //Accion del boton agregarAlCarrito
+        tablaCarrito.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent ev) {
+				int column = tablaCarrito.getColumnModel().getColumnIndexAtX(ev.getX());
+				int row = ev.getY()/tablaCarrito.getRowHeight();
+				
+				if(row < tablaCarrito.getRowCount() && row >= 0 && column < tablaCarrito.getColumnCount() && column >= 0) {
+					Object value = tablaCarrito.getValueAt(row, column);
+					
+					if(value instanceof JButton) {
+						((JButton)value).doClick();
+						JButton boton = (JButton)value;
+						ArrayList<Producto> actualizar = agente.getProductos();
+						if ((int)tablaCarrito.getValueAt(row, 4) == 1) {
+							System.out.println("Eliminando producto con codigo "+ actualizar.get(row).getCodigo() +" del carrito.");
+							actualizar.remove(row);
+							agente.setProductos(actualizar);
+							modelo.removeRow(row);
+						} else {
+							Object item = modelo.getDataVector().get(row);
+							int cant = (int)((Vector)item).get(4) - 1;
+							((Vector)item).set(4, cant);
+							float precio = (float)((Vector)item).get(3);
+							((Vector)item).set(5, cant*precio);
+							modelo.fireTableDataChanged();
+							tablaCarrito.setModel(modelo);
+							System.out.println("Producto "+ ((Vector)item).get(0).toString() +": Cantidad actualizada en el carrito.");
+						}
+						
+					}
+					
+				}
+				
+			}
+		});
         
 		cargarProductos(agente.getProductos());
 	}
@@ -238,8 +278,9 @@ public class Cart extends JFrame{
 			int cant = modelo.getRowCount();
 	        for (int i = 0; i < cant; i++) {
 	            modelo.removeRow(0);
-	            agente.setProductos(new ArrayList<Producto>());
 	        }
+	        agente.setProductos(new ArrayList<Producto>());
+	        System.out.println("Carrito vaciado.");
 	    }
 		else JOptionPane.showMessageDialog(this, "El carrito ya está vacío.", "Error", JOptionPane.ERROR_MESSAGE);
 	    Subtotal.setText("0");
@@ -254,17 +295,23 @@ public class Cart extends JFrame{
 	
     //Agregar nueva fila en la tabla
 	public void AgregarFila(String codigo, String nombre, float precio, String categoria,String url) {
-    	JLabel imagen = new JLabel("");
-		ImageIcon imagenProducto = new ImageIcon(new ImageIcon(Principal.class.getResource(url)).getImage().getScaledInstance(50, 50,Image.SCALE_DEFAULT));
+		JButton btnEliminar = new JButton("");
+		btnEliminar.setIcon(new ImageIcon(Cart.class.getResource("/img/eliminar.png")));
+		btnEliminar.setOpaque(true);
+		btnEliminar.setContentAreaFilled(false);
+		btnEliminar.setBackground(Color.WHITE);
+		JLabel imagen = new JLabel("");
+		ImageIcon imagenProducto = new ImageIcon(new ImageIcon(Cart.class.getResource(url)).getImage().getScaledInstance(50, 50,Image.SCALE_DEFAULT));
 		imagen.setIcon(imagenProducto);
 		imagen.setBounds(543, 11, 30, 30);
-        Object[] fila = new Object[6];
+        Object[] fila = new Object[7];
         fila[0] = codigo;
         fila[1] = imagen;
         fila[2] = nombre;
         fila[3] = precio;
         fila[4] = 1;
         fila[5] = precio;
+        fila[6] = btnEliminar;
         modelo.addRow(fila);
         tablaCarrito.setModel(modelo);
     }
