@@ -76,10 +76,18 @@ public class Principal extends JFrame{
         });
 		initialize();
 	}
+<<<<<<< HEAD
+=======
+
+>>>>>>> b4665d5755c7af130f1d17ef3f922d2e653a0789
 	public void cerrarSesion() {
         WindowEvent wev = new WindowEvent(this, WindowEvent.WINDOW_CLOSING);
         Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(wev);
 	}
+<<<<<<< HEAD
+=======
+	
+>>>>>>> b4665d5755c7af130f1d17ef3f922d2e653a0789
 	/**
 	 * Initialize the contents of the frame.
 	 */
@@ -148,11 +156,19 @@ public class Principal extends JFrame{
 		
 		JLabel lblBuscar = new JLabel("Busca un producto:");
 		lblBuscar.setHorizontalAlignment(SwingConstants.RIGHT);
+<<<<<<< HEAD
 	    lblBuscar.setFont(new Font("Segoe UI", Font.PLAIN, 14));
 		lblBuscar.setForeground(new Color(255, 255, 255));
 		ImageIcon buscar = new ImageIcon(new ImageIcon(Principal.class.getResource("/img/search.png")).getImage().getScaledInstance(20, 20, Image.SCALE_DEFAULT));
 	    lblBuscar.setIcon(buscar);
 	    lblBuscar.setBounds(147, 13, 142, 20);
+=======
+		lblBuscar.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+		lblBuscar.setForeground(new Color(255, 255, 255));
+		ImageIcon buscar = new ImageIcon(new ImageIcon(Principal.class.getResource("/img/search.png")).getImage().getScaledInstance(20, 20, Image.SCALE_DEFAULT));
+		lblBuscar.setIcon(buscar);
+        lblBuscar.setBounds(147, 13, 142, 20);
+>>>>>>> b4665d5755c7af130f1d17ef3f922d2e653a0789
 		panel_1.add(lblBuscar);
 		
 		textField = new JTextField();
@@ -163,10 +179,17 @@ public class Principal extends JFrame{
 		
 		JLabel lblOBuscaPor = new JLabel("Busca por categor\u00EDa:");
 		lblOBuscaPor.setHorizontalAlignment(SwingConstants.RIGHT);
+<<<<<<< HEAD
 	    lblOBuscaPor.setFont(new Font("Segoe UI", Font.PLAIN, 14));
 		lblOBuscaPor.setForeground(new Color(255, 255, 255));
 		lblOBuscaPor.setIcon(buscar);
 	    lblOBuscaPor.setBounds(142, 52, 147, 20);
+=======
+		lblOBuscaPor.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+		lblOBuscaPor.setForeground(new Color(255, 255, 255));
+		lblOBuscaPor.setIcon(buscar);
+		lblOBuscaPor.setBounds(142, 52, 147, 20);
+>>>>>>> b4665d5755c7af130f1d17ef3f922d2e653a0789
 		panel_1.add(lblOBuscaPor);
 		
 		JComboBox comboBox = new JComboBox();
@@ -184,6 +207,7 @@ public class Principal extends JFrame{
 		panel.add(lblProductosDisponibles);
 		
 		JButton btnCerrarSesin = new JButton("Cerrar sesi\u00F3n");
+<<<<<<< HEAD
 	    btnCerrarSesin.setFocusable(false);
 	    btnCerrarSesin.addActionListener(new ActionListener() {
 	      public void actionPerformed(ActionEvent arg0) {
@@ -197,6 +221,21 @@ public class Principal extends JFrame{
 	    btnCerrarSesin.setOpaque(true);
 	    btnCerrarSesin.setBounds(465, 11, 99, 23);
 	    panel.add(btnCerrarSesin);
+=======
+		btnCerrarSesin.setFocusable(false);
+		btnCerrarSesin.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				cerrarSesion();
+			}
+		});
+		btnCerrarSesin.setBackground(new Color(255, 255, 255));
+		btnCerrarSesin.setFont(new Font("Segoe UI Semilight", Font.PLAIN, 12));
+		btnCerrarSesin.setBorder(new LineBorder(new Color(102, 205, 170), 2));
+		btnCerrarSesin.setContentAreaFilled(false);
+		btnCerrarSesin.setOpaque(true);
+		btnCerrarSesin.setBounds(465, 11, 99, 23);
+		panel.add(btnCerrarSesin);
+>>>>>>> b4665d5755c7af130f1d17ef3f922d2e653a0789
         
         //Renderizar tabla para que admita imagenes y botones
         tablaProductos.setDefaultRenderer(Object.class, new Render());
