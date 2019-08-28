@@ -41,6 +41,10 @@ public class Main {
                 ac = mainContainer.createNewAgent(usuarios[i],
                         "agentes.Usuario", null);
                 ac.start();
+                
+                ac = mainContainer.createNewAgent("carrito"+usuarios[i],
+                        "agentes.Carrito", null);
+                ac.start();
             }
         } catch (StaleProxyException e) {
             e.printStackTrace();
