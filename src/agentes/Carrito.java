@@ -135,11 +135,20 @@ public class Carrito extends Agent {
 		actualizarcategoriasPreferidas();
 		System.out.println("Sugiriendo");
 		ArrayList<Producto> products = new ArrayList<Producto>();
-		if(!preferencias.isEmpty())
-		for (String p : preferencias) {
-			System.out.println("Preferencia: " + p);
-			Producto producto = new Producto();
-			producto = mejorOferta(productoDAO.listaProductos(), p);
+		if(!preferencias.isEmpty()) {
+			String prod = "";
+			int mayor = 0;
+			ArrayList<String> categ = new ArrayList<String>();
+	        Set<String> quipu = new HashSet<String>(preferencias);
+	        for (String key : quipu) {       	
+	        	int f = Collections.frequency(preferencias, key);
+	        	if(f > mayor) {
+	        		prod = key;
+	        		mayor = f;        		
+	        	}    	
+	        }
+	        Producto producto = new Producto();
+	        producto = mejorOferta(productoDAO.listaProductos(), prod);
 			if (producto != null) {
 				
 				if (productoDAO.buscarItem(productos, producto.getCodigo()) != null) {
