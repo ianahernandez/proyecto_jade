@@ -1,13 +1,12 @@
 package vistas;
 
-import java.awt.EventQueue;
-
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import java.awt.Color;
 import javax.swing.JLabel;
 import java.awt.Font;
 import javax.swing.SwingConstants;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JTextField;
@@ -18,10 +17,19 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
 public class Perfil extends JFrame {
-
-	private JTextField correo;
-	private JPasswordField contrasenna;
+	private JPasswordField contrasenna = new JPasswordField();
 	private JTextField nombre;
+	JComboBox categoria1 = new JComboBox();
+	JComboBox categoria2 = new JComboBox();
+	
+	public JComboBox getCategoria1() {
+		return categoria1;
+	}
+
+	public JComboBox getCategoria2() {
+		return categoria2;
+	}
+
 	private agentes.Usuario agente;
 
 	/**
@@ -87,6 +95,20 @@ public class Perfil extends JFrame {
 		 getContentPane().add(lblPerfil);
 		
 		JButton btnGuardar = new JButton("Guardar cambios");
+		btnGuardar.addActionListener(new ActionListener() {
+			@SuppressWarnings("deprecation")
+			public void actionPerformed(ActionEvent arg0) {
+				if( categoria1.getSelectedIndex() != 0 ) {
+					agente.guardarPreferenciaCategoria(categoria1.getSelectedItem().toString(),true);
+				}
+				if( categoria2.getSelectedIndex() != 0 ) {
+					agente.guardarPreferenciaCategoria(categoria2.getSelectedItem().toString(),true);
+				}
+				if(!contrasenna.getText().isEmpty())
+				agente.setContrasenna(contrasenna.getText());
+				dispose();
+			}
+		});
 		btnGuardar.setOpaque(true);
 		btnGuardar.setForeground(Color.WHITE);
 		btnGuardar.setFont(new Font("Segoe UI Semibold", Font.PLAIN, 15));
@@ -97,27 +119,15 @@ public class Perfil extends JFrame {
 		btnGuardar.setOpaque(true);
 		 getContentPane().add(btnGuardar);
 		
-		JLabel lblCorreo = new JLabel("Correo electr\u00F3nico");
-		lblCorreo.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-		lblCorreo.setBounds(329, 108, 165, 20);
-		 getContentPane().add(lblCorreo);
-		
-		correo = new JTextField();
-		correo.setToolTipText("");
-		correo.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-		correo.setColumns(10);
-		correo.setBounds(329, 130, 238, 29);
-		 getContentPane().add(correo);
-		
-		JLabel lblContrase = new JLabel("Contrase\u00F1a");
+		JLabel lblContrase = new JLabel("Nueva Contrase\u00F1a");
 		lblContrase.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-		lblContrase.setBounds(329, 170, 121, 20);
+		lblContrase.setBounds(329, 108, 121, 20);
 		 getContentPane().add(lblContrase);
 		
-		contrasenna = new JPasswordField();
+		
 		contrasenna.setFont(new Font("Segoe UI", Font.PLAIN, 14));
 		contrasenna.setColumns(10);
-		contrasenna.setBounds(329, 192, 238, 29);
+		contrasenna.setBounds(329, 130, 238, 29);
 		 getContentPane().add(contrasenna);
 		
 		JLabel lblNombre = new JLabel("Nombre");
@@ -134,22 +144,27 @@ public class Perfil extends JFrame {
 		
 		JLabel lblCategoraPreferida = new JLabel("Categor\u00EDa Preferida 1");
 		lblCategoraPreferida.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-		lblCategoraPreferida.setBounds(329, 232, 165, 20);
+		lblCategoraPreferida.setBounds(329, 170, 165, 20);
 		 getContentPane().add(lblCategoraPreferida);
 		
-		JComboBox categoria1 = new JComboBox();
-		categoria1.setBounds(329, 255, 238, 29);
+		
+		categoria1.setBounds(329, 193, 238, 29);
 		 getContentPane().add(categoria1);
+		categoria1.setModel(new DefaultComboBoxModel(
+                new String[] {"Seleccione una categoria","Dulces", "Enlatados", "Salsas", "Reposteria","Telefonía"}));
 		
 		JLabel lblCategoraPreferida_1 = new JLabel("Categor\u00EDa Preferida 2");
 		lblCategoraPreferida_1.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-		lblCategoraPreferida_1.setBounds(329, 295, 165, 20);
+		lblCategoraPreferida_1.setBounds(329, 233, 165, 20);
 		 getContentPane().add(lblCategoraPreferida_1);
 		
-		JComboBox categoria2 = new JComboBox();
-		categoria2.setBounds(329, 318, 238, 29);
-		 getContentPane().add(categoria2);
+		
+		categoria2.setBounds(329, 256, 238, 29);
+		getContentPane().add(categoria2);
+		categoria2.setModel(new DefaultComboBoxModel(
+                new String[] {"Seleccione una categoria","Dulces", "Enlatados", "Salsas", "Reposteria","Telefonía"}));
 		 
 		nombre.setText(agente.getLocalName());
 	}
+
 }

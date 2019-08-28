@@ -22,6 +22,7 @@ public class Usuario extends Agent {
 	private vistas.Principal gui;
 	private vistas.Perfil guiPerfil;
 	private String contrasenna = "123";
+	private String categoria1, categoria2;
 
 	protected void setup() {
 		gui = new vistas.Principal(this);
@@ -164,7 +165,7 @@ public class Usuario extends Agent {
 		guiPerfil.setVisible(true);
 	}
 
-	public void guardarPreferencia(String nombre) {
+	public void guardarPreferenciaProducto(String nombre) {
 		ACLMessage msg = new ACLMessage(ACLMessage.REQUEST);
 		msg.addReceiver(new AID("carrito" + this.getLocalName(), AID.ISLOCALNAME));
 		msg.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST);
@@ -190,5 +191,54 @@ public class Usuario extends Agent {
 			}
 		});
 	}
+	
+	public void guardarPreferenciaCategoria(String categoria, boolean perfil) {
+		String tipo = "CATEGPRINC-";
+		if(perfil)
+			tipo = "CATEGPERF-";
+		ACLMessage msg = new ACLMessage(ACLMessage.REQUEST);
+		msg.addReceiver(new AID("carrito" + this.getLocalName(), AID.ISLOCALNAME));
+		msg.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST);
+		msg.setReplyByDate(new Date(System.currentTimeMillis() + 10000));
+		msg.setContent(tipo + categoria);
+		addBehaviour(new AchieveREInitiator(this, msg) {
+			protected void handleInform(ACLMessage inform) {
+				System.out.println(inform.getSender().getLocalName() + "Se ha agregado la categoria" + categoria
+						+ "a las preferencias");
+			}
+
+			protected void handleRefuse(ACLMessage refuse) {
+				System.out.println(refuse.getSender().getLocalName() + ": " + refuse.getContent());
+			}
+
+			protected void handleFailure(ACLMessage failure) {
+				if (failure.getSender().equals(myAgent.getAMS())) {
+					// Mensaje de la plataforma JADE: El destinatario no existe
+					System.out.println("El carrito no esta disponible");
+				} else {
+					System.out.println(failure.getSender().getLocalName() + ": " + failure.getContent());
+				}
+			}
+		});
+	}
+
+	public String getCategoria1() {
+		
+		return categoria1;
+	}
+	
+	public String getCategoria2() {
+		return categoria2;
+	}
+
+	public String getContrasenna() {
+		return contrasenna;
+	}
+
+	public void setContrasenna(String contrasenna) {
+		this.contrasenna = contrasenna;
+	}
+	
+	
 
 }

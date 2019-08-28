@@ -206,6 +206,7 @@ public class Principal extends JFrame{
         
         //Renderizar tabla para que admita imagenes y botones
         tablaProductos.setDefaultRenderer(Object.class, new Render());
+        tablaProductos.setAutoCreateRowSorter(true);
         
         //Llenar la tablar con todos los productos
         cargarProductos(productoDAO.listaProductos());
@@ -266,10 +267,12 @@ public class Principal extends JFrame{
         
         comboBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				if(comboBox.getSelectedItem().toString().equals("Todo"))
+				if(comboBox.getSelectedItem().toString().equals("Todo"))					
 					cargarProductos(productoDAO.listaProductos());
-				else
-				productosEncontrados((String)comboBox.getSelectedItem().toString());
+				else {
+					agente.guardarPreferenciaCategoria(comboBox.getSelectedItem().toString(),false);
+					productosEncontrados((String)comboBox.getSelectedItem().toString());
+				}				
 			}
 		});
         
@@ -360,7 +363,7 @@ public class Principal extends JFrame{
       //Cargar productos buscados por nombre
         public void buscarPorNombre(String nombre) {
         ArrayList<Producto> productos = productoDAO.productosNombre(productoDAO.listaProductos(), nombre);
-        agente.guardarPreferencia(nombre);
+        agente.guardarPreferenciaProducto(nombre);
         if(productos.size()==0) {
         	JOptionPane.showMessageDialog(this, "No hay productos para su búsqueda.", "Error", JOptionPane.ERROR_MESSAGE);
         	comboBox.setSelectedIndex(0);

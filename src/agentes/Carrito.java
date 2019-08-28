@@ -1,6 +1,9 @@
 package agentes;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 import jade.core.*;
 import jade.domain.DFService;
@@ -23,9 +26,10 @@ public class Carrito extends Agent {
 	private vistas.Cart gui;
 	private ProductoDAO productoDAO = new ProductoDAO();
 
-	private String[] categoriasPreferidas = {};
+	private ArrayList<String> categoriasPreferidas = new ArrayList<String>();
+	private ArrayList<String> categoriasPreferidasPerfil = new ArrayList<String>();
+	private ArrayList<String> categoriasPreferidasPrincipal = new ArrayList<String>();
 	private ArrayList<String> preferencias = new ArrayList<String>();
-	private ArrayList<Producto> productosPreferidos = new ArrayList<Producto>();
 	private ArrayList<Producto> productos = new ArrayList<Producto>();
 
 	public ArrayList<Producto> getProductos() {
@@ -72,7 +76,7 @@ public class Carrito extends Agent {
 						gui.setVisible(true);
 					} else {
 						// cargar preferencias
-						if(!preferencias.isEmpty() && productos.isEmpty()) {
+						if((!preferencias.isEmpty() || !categoriasPreferidasPrincipal.isEmpty() || !categoriasPreferidasPerfil.isEmpty()) && productos.isEmpty()) {
 							gui.Limpiar();
 							sugerirCompras();
 							gui.setVisible(true);
@@ -82,10 +86,17 @@ public class Carrito extends Agent {
 				// Agregar preferencias
 				else if (request.getContent().contains("PREF")) {
 					String preferencia = request.getContent().split("-")[1];
-//            		Producto p = new Producto();
-//            		String codigo = request.getContent().split("-")[1];
-//            		p = buscarItem(listaProductos(),codigo);
 					preferencias.add(preferencia);
+				}
+				else if (request.getContent().contains("CATEGPRINC")) {
+					String categoria = request.getContent().split("-")[1];
+					System.out.println("Agregando en principal");
+					categoriasPreferidasPrincipal.add(categoria);
+				}
+				else if (request.getContent().contains("CATEGPERF")) {
+					String categoria = request.getContent().split("-")[1];
+					System.out.println("Agregando en perfil");
+					categoriasPreferidasPerfil.add(categoria);
 				}
 				// Agregar al carrito
 				else {
@@ -121,12 +132,36 @@ public class Carrito extends Agent {
 	}
 
 	public void sugerirCompras() {
+		actualizarcategoriasPreferidas();
 		System.out.println("Sugiriendo");
 		ArrayList<Producto> products = new ArrayList<Producto>();
+		if(!preferencias.isEmpty())
 		for (String p : preferencias) {
 			System.out.println("Preferencia: " + p);
 			Producto producto = new Producto();
 			producto = mejorOferta(productoDAO.listaProductos(), p);
+			if (producto != null) {
+				
+				if (productoDAO.buscarItem(productos, producto.getCodigo()) != null) {
+					// Aumentar cantidad
+					gui.incrementar(producto.getCodigo());
+
+				} else {
+					productos.add(producto);
+					gui.AgregarFila(producto.getCodigo(), producto.getNombre(), producto.getPrecio(),
+							producto.getCategoria(), producto.getImagen());
+					// gui.cargarProductos(productos);
+				}
+			}
+		}
+		
+		if(!categoriasPreferidas.isEmpty())
+		for (String c : categoriasPreferidas) {
+			ArrayList<Producto> res = new ArrayList<Producto>();
+			res = productoDAO.productosCategoria(productoDAO.listaProductos(), c);
+			
+			Producto producto = new Producto();
+			producto = res.get((int) Math.floor(Math.random()*res.size()));
 			if (producto != null) {
 				
 				if (productoDAO.buscarItem(productos, producto.getCodigo()) != null) {
@@ -159,6 +194,39 @@ public class Carrito extends Agent {
 			return producto;
 		}
 		return null;
+	}
+	
+	public void actualizarcategoriasPreferidas() {
+		categoriasPreferidas = new ArrayList<String>();
+		
+		//Agregar las preferencias del perfil
+		if(!categoriasPreferidasPerfil.isEmpty()) 
+			categoriasPreferidas.add(categoriasPreferidasPerfil.get(categoriasPreferidasPerfil.size()-1));
+		if(categoriasPreferidasPerfil.size()>=2)
+			categoriasPreferidas.add(categoriasPreferidasPerfil.get(categoriasPreferidasPerfil.size()-2));
+		
+		//Agregar lo mas buscado
+		
+		
+		String categoria = "";
+		int mayor = 0;
+		ArrayList<String> categ = new ArrayList<String>();
+		categ.add("Dulces");
+		categ.add("Enlatados");
+		categ.add("Salsas");
+		categ.add("Reposteria");
+		categ.add("Telefonía");
+        Set<String> quipu = new HashSet<String>(categ);
+        for (String key : quipu) {       	
+        	int f = Collections.frequency(categoriasPreferidasPrincipal, key);
+        	if(f > mayor) {
+        		categoria = key;
+        		mayor = f;        		
+        	}    	
+        }
+        System.out.println("La categoria mas buscada es: "+categoria);
+        if(mayor!=0)
+        	categoriasPreferidas.add(categoria);
 	}
 
 }
